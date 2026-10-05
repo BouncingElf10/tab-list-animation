@@ -1,5 +1,6 @@
 package com.bouncingelf10.tla;
 
+import com.bouncingelf10.tla.config.TlaConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.resources.Identifier;
 
@@ -12,7 +13,7 @@ public class TabListAnimationClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		LOGGER.info("Hello Fabric world!");
+		TlaConfig.HANDLER.load();
 	}
 
 	public static Identifier id(String path) {
