@@ -16,7 +16,9 @@
 	"entrypoints": {
 		"client": [
 			"com.bouncingelf10.tla.TabListAnimationClient"
-		]
+		],
+		"modmenu": [
+			"com.bouncingelf10.tla.compat.ModMenuCompat"
 		]
 	},
 	"mixins": [
@@ -29,5 +31,8 @@
 		"fabric-api": "*",
 		"timelesslib": ">=2.0.1-",
 		"yet_another_config_lib_v3": ">=3.9.7"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }
