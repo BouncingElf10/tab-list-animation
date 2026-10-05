@@ -3,13 +3,12 @@
 	"id": "tab-list-animation",
 	"version": "${version}",
 	"name": "Tab List Animation",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Smooth, configurable open/close animations for the player tab list.",
 	"authors": [
 		"BouncingElf10"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/BouncingElf10/tab-list-animation"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/tab-list-animation/icon.png",
@@ -17,6 +16,7 @@
 	"entrypoints": {
 		"client": [
 			"com.bouncingelf10.tla.TabListAnimationClient"
+		]
 		]
 	},
 	"mixins": [
@@ -26,6 +26,8 @@
 		"fabricloader": ">=0.19.5",
 		"minecraft": "~26.3",
 		"java": ">=25",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"timelesslib": ">=2.0.1-",
+		"yet_another_config_lib_v3": ">=3.9.7"
 	}
 }
