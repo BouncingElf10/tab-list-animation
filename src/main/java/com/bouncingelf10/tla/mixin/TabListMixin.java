@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 public class TabListMixin {
 	@WrapOperation(method = "extractTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z"))
 	private boolean tla$keepOpen(KeyMapping key, Operation<Boolean> original) {
-		return TabAnimator.HUD.update(original.call(key));
+		TabAnimator a = TabAnimator.HUD;
+		return a.update(a.resolveTarget(original.call(key)));
 	}
 
 	@WrapOperation(method = "extractTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerTabOverlay;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V"))

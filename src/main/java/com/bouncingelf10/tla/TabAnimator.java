@@ -14,10 +14,19 @@ public final class TabAnimator {
 	private double progress;
 	private boolean opening;
 	private long lastNanos = -1;
+	private boolean toggled, wasDown;
 	private Easing openEasing = Easing.LINEAR, closeEasing = Easing.LINEAR;
 
 	public TabAnimator(Supplier<TlaConfig> config) {
 		this.config = config;
+	}
+
+	public boolean resolveTarget(boolean keyDown) {
+		boolean pressed = keyDown && !wasDown;
+		wasDown = keyDown;
+		if (config.get().keyBehaviour == TlaConfig.KeyBehaviour.HOLD) return keyDown;
+		if (pressed) toggled = !toggled;
+		return toggled;
 	}
 
 	public boolean update(boolean target) {

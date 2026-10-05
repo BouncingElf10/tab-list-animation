@@ -36,7 +36,7 @@ public final class TlaConfigScreen {
 
 		Option<Double> openDuration = opt("openDuration", this::seconds);
 		Option<Double> closeDuration = opt("closeDuration", this::seconds);
-		List<Option<?>> timing = List.of(enabled, openDuration, closeDuration, openEasing, closeEasing);
+		List<Option<?>> timing = List.of(enabled, enumOpt("keyBehaviour", TlaConfig.KeyBehaviour.class), openDuration, closeDuration, openEasing, closeEasing);
 
 		return YetAnotherConfigLib.createBuilder()
 				.title(Component.translatable(KEY + "title"))

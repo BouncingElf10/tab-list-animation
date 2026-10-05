@@ -12,6 +12,8 @@
 	"tab-list-animation.group.scale.desc": "Grow the list from the top centre of the screen.",
 	"tab-list-animation.option.enabled": "Animate Tab List",
 	"tab-list-animation.option.enabled.desc": "Turn off to get the vanilla instant tab list.",
+	"tab-list-animation.option.keyBehaviour": "Key Behaviour",
+	"tab-list-animation.option.keyBehaviour.desc": "Hold: the list is open while the key is held (vanilla).\nToggle: press once to open, again to close.",
 	"tab-list-animation.option.openDuration": "Open Duration",
 	"tab-list-animation.option.openDuration.desc": "How long opening takes.",
 	"tab-list-animation.option.closeDuration": "Close Duration",

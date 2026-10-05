@@ -22,6 +22,7 @@ public class TlaConfig {
 			.build();
 
 	@SerialEntry public boolean enabled = true;
+	@SerialEntry public KeyBehaviour keyBehaviour = KeyBehaviour.HOLD;
 	@SerialEntry public double openDuration = 0.2;
 	@SerialEntry public double closeDuration = 0.2;
 	@SerialEntry public EasingType openEasing = EasingType.EASE_OUT_CUBIC;
@@ -50,6 +51,8 @@ public class TlaConfig {
 			return Component.translatableWithFallback(TabListAnimationClient.MOD_ID + ".enum." + e.getDeclaringClass().getSimpleName().toLowerCase(Locale.ROOT) + "." + e.name().toLowerCase(Locale.ROOT), fallback);
 		}
 	}
+
+	public enum KeyBehaviour implements Named { HOLD, TOGGLE }
 
 	public enum ScaleAxis implements Named {
 		BOTH(true, true), HORIZONTAL(true, false), VERTICAL(false, true);
