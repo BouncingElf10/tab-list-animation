@@ -47,6 +47,12 @@ public class TlaConfig {
 
 	@SerialEntry public boolean fadeEnabled = false;
 
+	@SerialEntry public boolean rowsEnabled = false;
+	@SerialEntry public double rowDelay = 4;
+	@SerialEntry public Direction rowDirection = Direction.LEFT;
+	@SerialEntry public int rowDistance = 20;
+	@SerialEntry public boolean rowFade = true;
+
 	public interface Named extends NameableEnum {
 		@Override
 		default Component getDisplayName() {

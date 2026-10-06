@@ -19,6 +19,10 @@ public final class TabAnimator {
 	private boolean toggled, wasDown;
 	private Easing openEasing = Easing.LINEAR, closeEasing = Easing.LINEAR;
 
+	private int row;
+	private boolean rowPushed;
+	private float rowAlpha = 1;
+
 	public TabAnimator(Supplier<TlaConfig> config) {
 		this.config = config;
 	}
@@ -73,9 +77,38 @@ public final class TabAnimator {
 		}
 	}
 
+	public void beginList() {
+		row = 0;
+		rowPushed = false;
+		rowAlpha = 1;
+	}
+
+	public void beginRow(Matrix3x2fStack pose) {
+		endRow(pose);
+		TlaConfig c = config.get();
+		int i = row++;
+		if (!c.enabled || !c.rowsEnabled) return;
+		double t = rowValue(i, c.rowDelay / 100.0);
+		float inv = (float) (1 - t);
+		pose.pushMatrix();
+		rowPushed = true;
+		pose.translate(c.rowDirection.dx * c.rowDistance * inv, c.rowDirection.dy * c.rowDistance * inv);
+		if (c.rowFade) rowAlpha = (float) clamp01(t);
+	}
+
+	public void endRow(Matrix3x2fStack pose) {
+		if (rowPushed) pose.popMatrix();
+		rowPushed = false;
+		rowAlpha = 1;
+	}
+
+	public double rowValue(int index, double delay) {
+		return value(openEasing, closeEasing, opening, rowProgress(progress, index, delay));
+	}
+
 	public int tint(int argb) {
 		TlaConfig c = config.get();
-		float alpha = c.enabled && c.fadeEnabled ? (float) clamp01(value()) : 1;
+		float alpha = rowAlpha * (c.enabled && c.fadeEnabled ? (float) clamp01(value()) : 1);
 		if (alpha >= 1) return argb;
 		int out = ARGB.multiplyAlpha(argb, alpha);
 		return ARGB.alpha(out) < 4 ? out & 0xFFFFFF : out;
@@ -122,6 +155,11 @@ public final class TabAnimator {
 			}
 		}
 		return (lo + hi) / 2;
+	}
+
+	public static double rowProgress(double progress, int index, double delay) {
+		double start = Math.min(index * delay, 0.75);
+		return clamp01((progress - start) / (1 - start));
 	}
 
 	private static double clamp01(double x) {

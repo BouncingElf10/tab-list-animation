@@ -12,8 +12,10 @@ import net.minecraft.world.scores.Scoreboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerTabOverlay.class)
 public class PlayerTabOverlayMixin {
@@ -26,9 +28,26 @@ public class PlayerTabOverlayMixin {
 		return a == null ? color : a.tint(color);
 	}
 
-	@ModifyArg(method = RENDER, index = 4, at = @At(value = "INVOKE", target = FILL, ordinal = 2))
-	private int tla$fadeRows(int color) {
-		return tla$tint(color);
+	@Inject(method = RENDER, at = @At("HEAD"))
+	private void tla$beginList(GuiGraphicsExtractor graphics, int width, Scoreboard scoreboard, Objective objective, CallbackInfo ci) {
+		if (TabAnimator.drawing != null) TabAnimator.drawing.beginList();
+	}
+
+	@WrapOperation(method = RENDER, at = @At(value = "INVOKE", target = FILL, ordinal = 2))
+	private void tla$beginRow(GuiGraphicsExtractor graphics, int x1, int y1, int x2, int y2, int color, Operation<Void> original) {
+		TabAnimator a = TabAnimator.drawing;
+		if (a != null) a.beginRow(graphics.pose());
+		original.call(graphics, x1, y1, x2, y2, tla$tint(color));
+	}
+
+	@Inject(method = RENDER, at = @At(value = "INVOKE", target = FILL, ordinal = 3))
+	private void tla$endRowsBeforeFooter(GuiGraphicsExtractor graphics, int width, Scoreboard scoreboard, Objective objective, CallbackInfo ci) {
+		if (TabAnimator.drawing != null) TabAnimator.drawing.endRow(graphics.pose());
+	}
+
+	@Inject(method = RENDER, at = @At("TAIL"))
+	private void tla$endRows(GuiGraphicsExtractor graphics, int width, Scoreboard scoreboard, Objective objective, CallbackInfo ci) {
+		if (TabAnimator.drawing != null) TabAnimator.drawing.endRow(graphics.pose());
 	}
 
 	@ModifyArg(method = RENDER, index = 4,
