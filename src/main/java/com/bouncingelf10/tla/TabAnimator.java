@@ -45,7 +45,11 @@ public final class TabAnimator {
 			progress = target ? 1 : 0;
 			return target;
 		}
-		opening = target;
+		if (target != opening) {
+			double v = value();
+			opening = target;
+			progress = solveProgress(openEasing, closeEasing, opening, v, progress);
+		}
 		double duration = opening ? c.openDuration : c.closeDuration;
 		progress = duration <= 0 ? (opening ? 1 : 0) : clamp01(progress + (opening ? dt : -dt) / duration);
 		return target || progress > 0;
@@ -83,6 +87,41 @@ public final class TabAnimator {
 
 	public static double value(Easing open, Easing close, boolean opening, double p) {
 		return opening ? open.apply(p) : 1 - close.apply(1 - p);
+	}
+
+	public static double solveProgress(Easing open, Easing close, boolean opening, double v, double hint) {
+		int samples = 64;
+		double best = hint, bestErr = Double.MAX_VALUE, bestRoot = -1;
+		double prevP = 0, prevD = value(open, close, opening, 0) - v;
+		for (int i = 0; i <= samples; i++) {
+			double p = i / (double) samples;
+			double d = value(open, close, opening, p) - v;
+			if (Math.abs(d) < bestErr) {
+				best = p;
+				bestErr = Math.abs(d);
+			}
+			if (i > 0 && (d == 0 || (prevD < 0) != (d < 0))) {
+				double root = bisect(open, close, opening, v, prevP, p, prevD);
+				if (bestRoot < 0 || Math.abs(root - hint) < Math.abs(bestRoot - hint)) bestRoot = root;
+			}
+			prevP = p;
+			prevD = d;
+		}
+		return bestRoot >= 0 ? bestRoot : best;
+	}
+
+	private static double bisect(Easing open, Easing close, boolean opening, double v, double lo, double hi, double loD) {
+		for (int i = 0; i < 40; i++) {
+			double mid = (lo + hi) / 2;
+			double d = value(open, close, opening, mid) - v;
+			if ((d < 0) == (loD < 0)) {
+				lo = mid;
+				loD = d;
+			} else {
+				hi = mid;
+			}
+		}
+		return (lo + hi) / 2;
 	}
 
 	private static double clamp01(double x) {
