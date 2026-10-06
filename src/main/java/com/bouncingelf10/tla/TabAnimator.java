@@ -3,12 +3,14 @@ package com.bouncingelf10.tla;
 import com.bouncingelf10.tla.config.TlaConfig;
 import dev.bouncingelf10.timelesslib.api.animation.Easing;
 import dev.bouncingelf10.timelesslib.api.clock.TimeSources;
+import net.minecraft.util.ARGB;
 import org.joml.Matrix3x2fStack;
 
 import java.util.function.Supplier;
 
 public final class TabAnimator {
 	public static final TabAnimator HUD = new TabAnimator(TlaConfig.HANDLER::instance);
+	public static TabAnimator drawing;
 
 	private final Supplier<TlaConfig> config;
 	private double progress;
@@ -57,12 +59,26 @@ public final class TabAnimator {
 		TlaConfig c = config.get();
 		if (!c.enabled) return;
 		double v = value();
+		float inv = (float) (1 - v);
+		if (c.slideEnabled) pose.translate(c.slideDirection.dx * c.slideDistance * inv, c.slideDirection.dy * c.slideDistance * inv);
 		if (c.scaleEnabled) {
 			float s = (float) Math.max(0, c.scaleFrom / 100.0 + (1 - c.scaleFrom / 100.0) * v);
 			pose.translate(width / 2f, 0);
 			pose.scale(c.scaleAxis.x ? s : 1, c.scaleAxis.y ? s : 1);
 			pose.translate(-width / 2f, 0);
 		}
+	}
+
+	public int tint(int argb) {
+		TlaConfig c = config.get();
+		float alpha = c.enabled && c.fadeEnabled ? (float) clamp01(value()) : 1;
+		if (alpha >= 1) return argb;
+		int out = ARGB.multiplyAlpha(argb, alpha);
+		return ARGB.alpha(out) < 4 ? out & 0xFFFFFF : out;
+	}
+
+	public float alpha() {
+		return ARGB.alpha(tint(0xFFFFFFFF)) / 255f;
 	}
 
 	public static double value(Easing open, Easing close, boolean opening, double p) {

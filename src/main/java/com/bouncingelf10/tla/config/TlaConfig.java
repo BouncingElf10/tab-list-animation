@@ -41,6 +41,12 @@ public class TlaConfig {
 	@SerialEntry public int scaleFrom = 0;
 	@SerialEntry public ScaleAxis scaleAxis = ScaleAxis.BOTH;
 
+	@SerialEntry public boolean slideEnabled = false;
+	@SerialEntry public Direction slideDirection = Direction.TOP;
+	@SerialEntry public int slideDistance = 40;
+
+	@SerialEntry public boolean fadeEnabled = false;
+
 	public interface Named extends NameableEnum {
 		@Override
 		default Component getDisplayName() {
@@ -62,6 +68,17 @@ public class TlaConfig {
 		ScaleAxis(boolean x, boolean y) {
 			this.x = x;
 			this.y = y;
+		}
+	}
+
+	public enum Direction implements Named {
+		TOP(0, -1), BOTTOM(0, 1), LEFT(-1, 0), RIGHT(1, 0);
+
+		public final int dx, dy;
+
+		Direction(int dx, int dy) {
+			this.dx = dx;
+			this.dy = dy;
 		}
 	}
 }

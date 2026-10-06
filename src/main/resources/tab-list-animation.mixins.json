@@ -2,7 +2,8 @@
 	"required": true,
 	"package": "com.bouncingelf10.tla.mixin",
 	"compatibilityLevel": "JAVA_25",
-	"mixins": [
+	"client": [
+		"PlayerTabOverlayMixin",
 		"TabListMixin"
 	],
 	"injectors": {

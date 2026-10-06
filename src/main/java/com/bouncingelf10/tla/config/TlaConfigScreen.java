@@ -31,8 +31,11 @@ public final class TlaConfigScreen {
 		when(closeEasing, e -> e == EasingType.CUSTOM, closeCurve);
 
 		Option<Boolean> scale = bool("scaleEnabled");
+		Option<Boolean> slide = bool("slideEnabled");
 		List<Option<?>> scaleOpts = List.of(intOpt("scaleFrom", 0, 150, 5, "%d%%"), enumOpt("scaleAxis", TlaConfig.ScaleAxis.class));
+		List<Option<?>> slideOpts = List.of(enumOpt("slideDirection", TlaConfig.Direction.class), intOpt("slideDistance", 0, 300, 5, "%dpx"));
 		when(scale, v -> v, scaleOpts);
+		when(slide, v -> v, slideOpts);
 
 		Option<Double> openDuration = opt("openDuration", this::seconds);
 		Option<Double> closeDuration = opt("closeDuration", this::seconds);
@@ -49,6 +52,8 @@ public final class TlaConfigScreen {
 				.category(ConfigCategory.createBuilder()
 						.name(Component.translatable(KEY + "category.effects"))
 						.group(group("scale", concat(scale, scaleOpts)))
+						.group(group("slide", concat(slide, slideOpts)))
+						.group(group("fade", List.of(bool("fadeEnabled"))))
 						.build())
 				.save(TlaConfig.HANDLER::save)
 				.build();

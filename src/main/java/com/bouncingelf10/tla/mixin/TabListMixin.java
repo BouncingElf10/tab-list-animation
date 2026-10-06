@@ -22,9 +22,15 @@ public class TabListMixin {
 
 	@WrapOperation(method = "extractTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerTabOverlay;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V"))
 	private void tla$animate(PlayerTabOverlay tabList, GuiGraphicsExtractor graphics, int width, Scoreboard scoreboard, Objective objective, Operation<Void> original) {
+		TabAnimator a = TabAnimator.HUD;
 		graphics.pose().pushMatrix();
-		TabAnimator.HUD.applyListTransform(graphics.pose(), width);
-		original.call(tabList, graphics, width, scoreboard, objective);
-		graphics.pose().popMatrix();
+		a.applyListTransform(graphics.pose(), width);
+		TabAnimator.drawing = a;
+		try {
+			original.call(tabList, graphics, width, scoreboard, objective);
+		} finally {
+			TabAnimator.drawing = null;
+			graphics.pose().popMatrix();
+		}
 	}
 }
