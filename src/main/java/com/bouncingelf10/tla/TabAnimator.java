@@ -28,6 +28,13 @@ public final class TabAnimator {
 		this.config = config;
 	}
 
+	public void reset() {
+		progress = 0;
+		opening = false;
+		toggled = false;
+		lastNanos = -1;
+	}
+
 	public boolean resolveTarget(boolean keyDown) {
 		boolean pressed = keyDown && !wasDown;
 		wasDown = keyDown;
@@ -58,6 +65,10 @@ public final class TabAnimator {
 		double duration = opening ? c.openDuration : c.closeDuration;
 		progress = duration <= 0 ? (opening ? 1 : 0) : clamp01(progress + (opening ? dt : -dt) / duration);
 		return target || progress > 0;
+	}
+
+	public boolean settled(boolean target) {
+		return opening == target && progress == (target ? 1 : 0);
 	}
 
 	public double value() {

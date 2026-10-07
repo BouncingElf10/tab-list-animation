@@ -16,6 +16,8 @@ public final class TlaConfigScreen {
 
 	private final TlaConfig config = TlaConfig.HANDLER.instance();
 	private final TlaConfig defaults = TlaConfig.HANDLER.defaults();
+	private final TlaConfig demoConfig = config.copy();
+	private final TabPreviewRenderer demo = new TabPreviewRenderer(demoConfig);
 
 	public static Screen create(Screen parent) {
 		return new TlaConfigScreen().build().generateScreen(parent);
@@ -33,12 +35,12 @@ public final class TlaConfigScreen {
 		Option<Boolean> scale = bool("scaleEnabled");
 		Option<Boolean> slide = bool("slideEnabled");
 		Option<Boolean> rows = bool("rowsEnabled");
-		Option<Boolean> blur = bool("blurEnabled");
-		List<Option<?>> scaleOpts = List.of(intOpt("scaleFrom", 0, 150, 5, "%d%%"), enumOpt("scaleAxis", TlaConfig.ScaleAxis.class));
-		List<Option<?>> slideOpts = List.of(enumOpt("slideDirection", TlaConfig.Direction.class), intOpt("slideDistance", 0, 300, 5, "%dpx"));
+		Option<Boolean> blur = opt("blurEnabled", TickBoxControllerBuilder::create, false);
+		List<Option<?>> scaleOpts = List.of(intOpt("scaleFrom", 0, 150, 5, "%d%%", true), enumOpt("scaleAxis", TlaConfig.ScaleAxis.class));
+		List<Option<?>> slideOpts = List.of(enumOpt("slideDirection", TlaConfig.Direction.class), intOpt("slideDistance", 0, 300, 5, "%dpx", true));
 		Option<Double> rowDelay = opt("rowDelay", o -> DoubleSliderControllerBuilder.create(o).range(0.0, 20.0).step(0.5).formatValue(v -> Component.literal("%.1f%%".formatted(v))));
-		List<Option<?>> rowOpts = List.of(rowDelay, enumOpt("rowDirection", TlaConfig.Direction.class), intOpt("rowDistance", 0, 100, 2, "%dpx"), bool("rowFade"));
-		List<Option<?>> blurOpts = List.of(intOpt("blurStrength", 1, 10, 1, "%d"));
+		List<Option<?>> rowOpts = List.of(rowDelay, enumOpt("rowDirection", TlaConfig.Direction.class), intOpt("rowDistance", 0, 100, 2, "%dpx", true), bool("rowFade"));
+		List<Option<?>> blurOpts = List.of(intOpt("blurStrength", 1, 10, 1, "%d", false));
 		when(scale, v -> v, scaleOpts);
 		when(slide, v -> v, slideOpts);
 		when(rows, v -> v, rowOpts);
@@ -69,19 +71,29 @@ public final class TlaConfigScreen {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> Option<T> opt(String fieldName, Function<Option<T>, ControllerBuilder<T>> controller) {
+	private <T> Option<T> opt(String fieldName, Function<Option<T>, ControllerBuilder<T>> controller, boolean withDemo) {
 		Field field;
 		try {
 			field = TlaConfig.class.getField(fieldName);
 		} catch (NoSuchFieldException e) {
 			throw new IllegalArgumentException(fieldName, e);
 		}
+		OptionDescription.Builder description = OptionDescription.createBuilder().text(Component.translatable(KEY + "option." + fieldName + ".desc"));
+		if (withDemo) description.customImage(demo);
 		return Option.<T>createBuilder()
 				.name(Component.translatable(KEY + "option." + fieldName))
-				.description(OptionDescription.of(Component.translatable(KEY + "option." + fieldName + ".desc")))
+				.description(description.build())
 				.binding((T) get(field, defaults), () -> (T) get(field, config), v -> set(field, config, v))
 				.controller(controller)
+				.addListener((option, event) -> {
+					set(field, demoConfig, option.pendingValue());
+					demo.restart();
+				})
 				.build();
+	}
+
+	private <T> Option<T> opt(String fieldName, Function<Option<T>, ControllerBuilder<T>> controller) {
+		return opt(fieldName, controller, true);
 	}
 
 	private static <T> void when(Option<T> parent, Predicate<T> test, List<? extends Option<?>> children) {
@@ -113,8 +125,8 @@ public final class TlaConfigScreen {
 		return opt(field, o -> EnumControllerBuilder.create(o).enumClass(type));
 	}
 
-	private Option<Integer> intOpt(String field, int min, int max, int step, String format) {
-		return opt(field, o -> IntegerSliderControllerBuilder.create(o).range(min, max).step(step).formatValue(v -> Component.literal(format.formatted(v))));
+	private Option<Integer> intOpt(String field, int min, int max, int step, String format, boolean withDemo) {
+		return opt(field, o -> IntegerSliderControllerBuilder.create(o).range(min, max).step(step).formatValue(v -> Component.literal(format.formatted(v))), withDemo);
 	}
 
 	private Option<Double> bezier(String field, boolean y) {

@@ -1,6 +1,7 @@
 package com.bouncingelf10.tla.config;
 
 import com.bouncingelf10.tla.TabListAnimationClient;
+import com.google.gson.Gson;
 import dev.isxander.yacl3.api.NameableEnum;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
@@ -20,6 +21,8 @@ public class TlaConfig {
 					.setJson5(true)
 					.build())
 			.build();
+
+	private static final Gson GSON = new Gson();
 
 	@SerialEntry public boolean enabled = true;
 	@SerialEntry public KeyBehaviour keyBehaviour = KeyBehaviour.HOLD;
@@ -55,6 +58,10 @@ public class TlaConfig {
 
 	@SerialEntry public boolean blurEnabled = false;
 	@SerialEntry public int blurStrength = 5;
+
+	public TlaConfig copy() {
+		return GSON.fromJson(GSON.toJson(this), TlaConfig.class);
+	}
 
 	public interface Named extends NameableEnum {
 		@Override
