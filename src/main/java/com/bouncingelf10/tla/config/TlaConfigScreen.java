@@ -3,6 +3,7 @@ package com.bouncingelf10.tla.config;
 import com.bouncingelf10.tla.TabListAnimationClient;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
+import dev.isxander.yacl3.api.utils.OptionUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -66,8 +67,32 @@ public final class TlaConfigScreen {
 						.group(group("rows", concat(rows, rowOpts)))
 						.group(group("blur", concat(blur, blurOpts)))
 						.build())
+				.category(presets())
 				.save(TlaConfig.HANDLER::save)
 				.build();
+	}
+
+	private ConfigCategory presets() {
+		ConfigCategory.Builder category = ConfigCategory.createBuilder().name(Component.translatable(KEY + "category.presets"));
+		for (TlaConfig.Preset preset : TlaConfig.Preset.values()) {
+			TlaConfig presetConfig = new TlaConfig();
+			preset.apply(presetConfig);
+			category.option(ButtonOption.createBuilder()
+					.name(preset.getDisplayName())
+					.text(Component.translatable(KEY + "preset.apply"))
+					.description(OptionDescription.createBuilder()
+							.text(Component.translatable(KEY + "preset.desc", preset.getDisplayName()))
+							.customImage(new TabPreviewRenderer(presetConfig))
+							.build())
+					.action((screen, button) -> {
+						preset.apply(config);
+						TlaConfig.HANDLER.save();
+						OptionUtils.forEachOptions(screen.config, Option::forgetPendingValue);
+						screen.init(screen.width, screen.height);
+					})
+					.build());
+		}
+		return category.build();
 	}
 
 	@SuppressWarnings("unchecked")

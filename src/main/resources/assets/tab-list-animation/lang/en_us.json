@@ -2,6 +2,7 @@
 	"tab-list-animation.title": "Tab List Animation",
 	"tab-list-animation.category.animation": "Animation",
 	"tab-list-animation.category.effects": "Effects",
+	"tab-list-animation.category.presets": "Presets",
 	"tab-list-animation.group.timing": "Timing",
 	"tab-list-animation.group.timing.desc": "When and how fast the tab list opens and closes.",
 	"tab-list-animation.group.open_curve": "Custom Open Curve",
@@ -74,10 +75,14 @@
 	"tab-list-animation.option.blurEnabled.desc": "Blur the world and HUD behind the open tab list.",
 	"tab-list-animation.option.blurStrength": "Blur Strength",
 	"tab-list-animation.option.blurStrength.desc": "Blur radius at full open.",
+	"tab-list-animation.preset.apply": "Apply",
+	"tab-list-animation.preset.desc": "Replace your current settings with the %s preset.",
 	"tab-list-animation.instant": "Instant",
 	"tab-list-animation.enum.direction.top": "From Top",
 	"tab-list-animation.enum.direction.bottom": "From Bottom",
 	"tab-list-animation.enum.direction.left": "From Left",
 	"tab-list-animation.enum.direction.right": "From Right",
-	"tab-list-animation.enum.easingtype.custom": "Custom Curve"
+	"tab-list-animation.enum.easingtype.custom": "Custom Curve",
+	"tab-list-animation.enum.preset.default": "Default",
+	"tab-list-animation.enum.preset.vanilla": "Vanilla (No Animation)"
 }

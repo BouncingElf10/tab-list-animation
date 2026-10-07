@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class TlaConfig {
@@ -95,6 +96,68 @@ public class TlaConfig {
 		Direction(int dx, int dy) {
 			this.dx = dx;
 			this.dy = dy;
+		}
+	}
+
+	public enum Preset implements Named {
+		DEFAULT(c -> {}),
+		VANILLA(c -> c.enabled = false),
+		POP(c -> {
+			c.openDuration = 0.35;
+			c.openEasing = EasingType.EASE_OUT_BACK;
+			c.closeDuration = 0.15;
+			c.scaleFrom = 60;
+			c.fadeEnabled = true;
+		}),
+		SLIDE_DOWN(c -> {
+			c.openDuration = 0.3;
+			c.closeDuration = 0.25;
+			c.scaleEnabled = false;
+			c.slideEnabled = true;
+			c.slideDistance = 60;
+			c.fadeEnabled = true;
+		}),
+		UNFOLD(c -> {
+			c.openDuration = 0.3;
+			c.openEasing = EasingType.EASE_OUT_QUART;
+			c.closeEasing = EasingType.EASE_IN_QUART;
+			c.scaleAxis = ScaleAxis.VERTICAL;
+		}),
+		CASCADE(c -> {
+			c.openDuration = 0.5;
+			c.closeDuration = 0.35;
+			c.scaleEnabled = false;
+			c.fadeEnabled = true;
+			c.rowsEnabled = true;
+			c.rowDelay = 6;
+			c.rowDistance = 30;
+		}),
+		BOUNCY(c -> {
+			c.openDuration = 0.6;
+			c.openEasing = EasingType.EASE_OUT_BOUNCE;
+			c.closeDuration = 0.2;
+			c.scaleEnabled = false;
+			c.slideEnabled = true;
+			c.slideDistance = 120;
+		});
+
+		private final Consumer<TlaConfig> changes;
+
+		Preset(Consumer<TlaConfig> changes) {
+			this.changes = changes;
+		}
+
+		public void apply(TlaConfig target) {
+			TlaConfig fresh = new TlaConfig();
+			changes.accept(fresh);
+			for (var f : TlaConfig.class.getFields()) {
+				if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) continue;
+				try {
+					f.set(target, f.get(fresh));
+				} catch (IllegalAccessException e) {
+					throw new IllegalStateException(e);
+				}
+			}
 		}
 	}
 }
