@@ -3,6 +3,7 @@
 	"package": "com.bouncingelf10.tla.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
+		"GameRendererMixin",
 		"PlayerTabOverlayMixin",
 		"TabListMixin"
 	],

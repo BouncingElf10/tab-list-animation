@@ -4,6 +4,7 @@ import com.bouncingelf10.tla.TabAnimator;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
@@ -23,6 +24,7 @@ public class TabListMixin {
 	@WrapOperation(method = "extractTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerTabOverlay;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V"))
 	private void tla$animate(PlayerTabOverlay tabList, GuiGraphicsExtractor graphics, int width, Scoreboard scoreboard, Objective objective, Operation<Void> original) {
 		TabAnimator a = TabAnimator.HUD;
+		if (a.prepareBlur(Minecraft.getInstance().gui.screen() != null)) graphics.blurBeforeThisStratum();
 		graphics.pose().pushMatrix();
 		a.applyListTransform(graphics.pose(), width);
 		TabAnimator.drawing = a;

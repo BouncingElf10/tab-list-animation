@@ -3,7 +3,7 @@
 	"id": "tab-list-animation",
 	"version": "${version}",
 	"name": "Tab List Animation",
-	"description": "Smooth, configurable open/close animations for the player tab list.",
+	"description": "Smooth, configurable open/close animations for the player tab list: easings, scale, slide, fade, row cascade and blur.",
 	"authors": [
 		"BouncingElf10"
 	],

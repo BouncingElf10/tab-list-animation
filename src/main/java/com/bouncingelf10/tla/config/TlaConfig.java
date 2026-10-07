@@ -53,6 +53,9 @@ public class TlaConfig {
 	@SerialEntry public int rowDistance = 20;
 	@SerialEntry public boolean rowFade = true;
 
+	@SerialEntry public boolean blurEnabled = false;
+	@SerialEntry public int blurStrength = 5;
+
 	public interface Named extends NameableEnum {
 		@Override
 		default Component getDisplayName() {

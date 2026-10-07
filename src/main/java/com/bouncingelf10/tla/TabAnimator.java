@@ -22,6 +22,7 @@ public final class TabAnimator {
 	private int row;
 	private boolean rowPushed;
 	private float rowAlpha = 1;
+	private int blurRadius = -1;
 
 	public TabAnimator(Supplier<TlaConfig> config) {
 		this.config = config;
@@ -116,6 +117,20 @@ public final class TabAnimator {
 
 	public float alpha() {
 		return ARGB.alpha(tint(0xFFFFFFFF)) / 255f;
+	}
+
+	public boolean prepareBlur(boolean screenOpen) {
+		TlaConfig c = config.get();
+		double v = clamp01(value());
+		boolean blur = c.enabled && c.blurEnabled && v > 0 && !screenOpen;
+		blurRadius = blur ? (int) Math.round(c.blurStrength * v) : -1;
+		return blur;
+	}
+
+	public int consumeBlurRadius(int fallback) {
+		int r = blurRadius;
+		blurRadius = -1;
+		return r >= 0 ? r : fallback;
 	}
 
 	public static double value(Easing open, Easing close, boolean opening, double p) {
