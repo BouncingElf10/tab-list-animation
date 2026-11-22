@@ -2,7 +2,7 @@ package com.bouncingelf10.tla;
 
 import com.bouncingelf10.tla.config.TlaConfig;
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ public class TabListAnimationClient implements ClientModInitializer {
 		TlaConfig.HANDLER.load();
 	}
 
-	public static Identifier id(String path) {
-		return Identifier.fromNamespaceAndPath(MOD_ID, path);
+	public static ResourceLocation id(String path) {
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 }

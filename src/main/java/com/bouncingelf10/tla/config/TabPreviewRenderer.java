@@ -5,12 +5,13 @@ import dev.isxander.yacl3.gui.image.ImageRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.PlayerFaceExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -19,7 +20,7 @@ public class TabPreviewRenderer implements ImageRenderer {
 	private static final int W = 256, H = 144;
 	private static final String[] NAMES = {"Notch", "jeb_", "Alex", "Steve", "Dinnerbone", "Kai", "Noor", "Sunny"};
 	private static final int[] PINGS = {5, 5, 4, 5, 3, 5, 2, 4};
-	private static final Identifier HOTBAR = Identifier.withDefaultNamespace("hud/hotbar");
+	private static final ResourceLocation HOTBAR = ResourceLocation.withDefaultNamespace("hud/hotbar");
 
 	private final TabAnimator animator;
 	private boolean open = true;
@@ -45,31 +46,31 @@ public class TabPreviewRenderer implements ImageRenderer {
 	}
 
 	@Override
-	public int render(GuiGraphicsExtractor graphics, int x, int y, int renderWidth, float tickDelta) {
+	public int render(GuiGraphics graphics, int x, int y, int renderWidth, float tickDelta) {
 		int renderHeight = renderWidth * H / W;
 		float scale = renderWidth / (float) W;
 
 		graphics.enableScissor(x, y, x + renderWidth, y + renderHeight);
-		graphics.pose().pushMatrix();
-		graphics.pose().translate(x, y);
-		graphics.pose().scale(scale, scale);
+		graphics.pose().pushPose();
+		graphics.pose().translate(x, y, 0);
+		graphics.pose().scale(scale, scale, 1);
 
 		graphics.fillGradient(0, 0, W, H, 0xFF78A7FF, 0xFFC3D9FF);
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, HOTBAR, (W - 182) / 2, H - 23, 182, 22);
+		graphics.blitSprite(RenderType::guiTextured, HOTBAR, (W - 182) / 2, H - 23, 182, 22);
 
 		if (animator.update(open)) {
-			graphics.pose().pushMatrix();
+			graphics.pose().pushPose();
 			animator.applyListTransform(graphics.pose(), W);
 			drawTabList(graphics);
-			graphics.pose().popMatrix();
+			graphics.pose().popPose();
 		}
 
-		graphics.pose().popMatrix();
+		graphics.pose().popPose();
 		graphics.disableScissor();
 		return renderHeight;
 	}
 
-	private void drawTabList(GuiGraphicsExtractor g) {
+	private void drawTabList(GuiGraphics g) {
 		Font font = Minecraft.getInstance().font;
 		Component header = Component.literal("Tab List Animation").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
 		Component footer = Component.literal("play.example.net").withStyle(ChatFormatting.GRAY);
@@ -82,7 +83,7 @@ public class TabPreviewRenderer implements ImageRenderer {
 
 		animator.beginList();
 		g.fill(left - 1, top - 1, left + rowWidth + 1, top + 9, animator.tint(0x80000000));
-		g.text(font, header, (W - font.width(header)) / 2, top, animator.tint(0xFFFFFFFF));
+		drawText(g, font, header, (W - font.width(header)) / 2, top);
 		top += 10;
 
 		g.fill(left - 1, top - 1, left + rowWidth + 1, top + NAMES.length * 9, animator.tint(0x80000000));
@@ -91,15 +92,20 @@ public class TabPreviewRenderer implements ImageRenderer {
 			animator.beginRow(g.pose());
 			g.fill(left, rowY, left + rowWidth, rowY + 8, animator.tint(0x20FFFFFF));
 			UUID uuid = UUID.nameUUIDFromBytes(NAMES[i].getBytes(StandardCharsets.UTF_8));
-			PlayerFaceExtractor.extractRenderState(g, DefaultPlayerSkin.get(uuid).body().texturePath(), left, rowY, 8, true, NAMES[i].equals("Dinnerbone"), animator.tint(0xFFFFFFFF));
-			g.text(font, Component.literal(NAMES[i]), left + 9, rowY, animator.tint(0xFFFFFFFF));
-			g.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8, animator.alpha());
+			PlayerFaceRenderer.draw(g, DefaultPlayerSkin.get(uuid).texture(), left, rowY, 8, true, NAMES[i].equals("Dinnerbone"), animator.tint(0xFFFFFFFF));
+			drawText(g, font, Component.literal(NAMES[i]), left + 9, rowY);
+			g.blitSprite(RenderType::guiTextured, ResourceLocation.withDefaultNamespace("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8, ARGB.white(animator.alpha()));
 		}
 		animator.endRow(g.pose());
 
 		top += NAMES.length * 9 + 1;
 		g.fill(left - 1, top - 1, left + rowWidth + 1, top + 9, animator.tint(0x80000000));
-		g.text(font, footer, (W - font.width(footer)) / 2, top, animator.tint(0xFFFFFFFF));
+		drawText(g, font, footer, (W - font.width(footer)) / 2, top);
+	}
+
+	private void drawText(GuiGraphics g, Font font, Component text, int x, int y) {
+		int color = animator.tintText(0xFFFFFFFF);
+		if (color != 0) g.drawString(font, text, x, y, color);
 	}
 
 	@Override

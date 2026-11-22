@@ -4,6 +4,7 @@ import com.bouncingelf10.tla.TabListAnimationClient;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
 import dev.isxander.yacl3.api.utils.OptionUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -89,7 +90,7 @@ public final class TlaConfigScreen {
 						preset.apply(config);
 						TlaConfig.HANDLER.save();
 						OptionUtils.forEachOptions(screen.config, Option::forgetPendingValue);
-						screen.init(screen.width, screen.height);
+						screen.init(Minecraft.getInstance(), screen.width, screen.height);
 					})
 					.build());
 		}

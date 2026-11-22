@@ -4,7 +4,7 @@ import com.bouncingelf10.tla.config.TlaConfig;
 import dev.bouncingelf10.timelesslib.api.animation.Easing;
 import dev.bouncingelf10.timelesslib.api.clock.TimeSources;
 import net.minecraft.util.ARGB;
-import org.joml.Matrix3x2fStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import java.util.function.Supplier;
 
@@ -75,17 +75,17 @@ public final class TabAnimator {
 		return value(openEasing, closeEasing, opening, progress);
 	}
 
-	public void applyListTransform(Matrix3x2fStack pose, float width) {
+	public void applyListTransform(PoseStack pose, float width) {
 		TlaConfig c = config.get();
 		if (!c.enabled) return;
 		double v = value();
 		float inv = (float) (1 - v);
-		if (c.slideEnabled) pose.translate(c.slideDirection.dx * c.slideDistance * inv, c.slideDirection.dy * c.slideDistance * inv);
+		if (c.slideEnabled) pose.translate(c.slideDirection.dx * c.slideDistance * inv, c.slideDirection.dy * c.slideDistance * inv, 0);
 		if (c.scaleEnabled) {
 			float s = (float) Math.max(0, c.scaleFrom / 100.0 + (1 - c.scaleFrom / 100.0) * v);
-			pose.translate(width / 2f, 0);
-			pose.scale(c.scaleAxis.x ? s : 1, c.scaleAxis.y ? s : 1);
-			pose.translate(-width / 2f, 0);
+			pose.translate(width / 2f, 0, 0);
+			pose.scale(c.scaleAxis.x ? s : 1, c.scaleAxis.y ? s : 1, 1);
+			pose.translate(-width / 2f, 0, 0);
 		}
 	}
 
@@ -95,21 +95,21 @@ public final class TabAnimator {
 		rowAlpha = 1;
 	}
 
-	public void beginRow(Matrix3x2fStack pose) {
+	public void beginRow(PoseStack pose) {
 		endRow(pose);
 		TlaConfig c = config.get();
 		int i = row++;
 		if (!c.enabled || !c.rowsEnabled) return;
 		double t = rowValue(i, c.rowDelay / 100.0);
 		float inv = (float) (1 - t);
-		pose.pushMatrix();
+		pose.pushPose();
 		rowPushed = true;
-		pose.translate(c.rowDirection.dx * c.rowDistance * inv, c.rowDirection.dy * c.rowDistance * inv);
+		pose.translate(c.rowDirection.dx * c.rowDistance * inv, c.rowDirection.dy * c.rowDistance * inv, 0);
 		if (c.rowFade) rowAlpha = (float) clamp01(t);
 	}
 
-	public void endRow(Matrix3x2fStack pose) {
-		if (rowPushed) pose.popMatrix();
+	public void endRow(PoseStack pose) {
+		if (rowPushed) pose.popPose();
 		rowPushed = false;
 		rowAlpha = 1;
 	}
@@ -122,8 +122,14 @@ public final class TabAnimator {
 		TlaConfig c = config.get();
 		float alpha = rowAlpha * (c.enabled && c.fadeEnabled ? (float) clamp01(value()) : 1);
 		if (alpha >= 1) return argb;
-		int out = ARGB.multiplyAlpha(argb, alpha);
+		int out = ARGB.color((int) (ARGB.alpha(argb) * alpha), argb);
 		return ARGB.alpha(out) < 4 ? out & 0xFFFFFF : out;
+	}
+
+	// Font draws colours with alpha < 4 as opaque, so 0 means skip the draw.
+	public int tintText(int argb) {
+		int out = tint((argb & 0xFC000000) == 0 ? argb | 0xFF000000 : argb);
+		return ARGB.alpha(out) < 4 ? 0 : out;
 	}
 
 	public float alpha() {

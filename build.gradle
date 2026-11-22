@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
 	id "me.modmuss50.mod-publish-plugin" version "2.0.0"
 }
@@ -9,24 +9,33 @@ repositories {
 		name = "Modrinth"
 		url = "https://api.modrinth.com/maven"
 	}
+	maven {
+		name = "Quilt"
+		url = "https://maven.quiltmc.org/repository/release"
+	}
 }
 
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	implementation "maven.modrinth:timelesslib:${project.timelesslib_version}"
-	implementation "maven.modrinth:yacl:${project.yacl_version}"
-	compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
-	localRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
+	modImplementation "maven.modrinth:timelesslib:${project.timelesslib_version}"
+	modImplementation "maven.modrinth:yacl:${project.yacl_version}"
+	modCompileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
+	modLocalRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
+
+	// YACL's bundled jars are not loaded in dev
+	localRuntime "org.quiltmc.parsers:json:0.2.1"
+	localRuntime "org.quiltmc.parsers:gson:0.2.1"
 }
 
 publishMods {
-	file = jar.archiveFile
+	file = remapJar.archiveFile
 	changelog = "Initial release"
 	type = STABLE
 	modLoaders.add("fabric")
@@ -34,7 +43,9 @@ publishMods {
 	curseforge {
 		projectId = "1823452"
 		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-		minecraftVersions.add("26.3")
+		minecraftVersions.add("1.21.2")
+		minecraftVersions.add("1.21.3")
+		minecraftVersions.add("1.21.4")
 		client = true
 		server = false
 		requires("fabric-api", "timelesslib", "yacl")
@@ -43,7 +54,9 @@ publishMods {
 	modrinth {
 		projectId = "yDAMWuLf"
 		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-		minecraftVersions.add("26.3")
+		minecraftVersions.add("1.21.2")
+		minecraftVersions.add("1.21.3")
+		minecraftVersions.add("1.21.4")
 		requires("fabric-api", "timelesslib", "yacl")
 		optional("modmenu")
 	}
@@ -59,7 +72,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+	it.options.release = 21
 }
 
 java {
@@ -68,8 +81,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
