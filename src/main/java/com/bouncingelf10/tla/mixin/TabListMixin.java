@@ -28,7 +28,6 @@ public class TabListMixin {
 		if (a.prepareBlur(minecraft.screen != null)) {
 			graphics.flush();
 			minecraft.gameRenderer.processBlurEffect();
-			minecraft.getMainRenderTarget().bindWrite(false);
 		}
 		graphics.pose().pushPose();
 		a.applyListTransform(graphics.pose(), width);

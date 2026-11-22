@@ -26,11 +26,11 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
-		"minecraft": ">=1.21.2 <=1.21.4",
+		"minecraft": "1.21.5",
 		"java": ">=21",
 		"fabric-api": "*",
 		"timelesslib": ">=2.0.1-",
-		"yet_another_config_lib_v3": ">=3.6.2"
+		"yet_another_config_lib_v3": ">=3.6.6"
 	},
 	"suggests": {
 		"modmenu": "*"
