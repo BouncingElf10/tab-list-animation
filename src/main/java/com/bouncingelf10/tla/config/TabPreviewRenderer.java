@@ -19,7 +19,7 @@ public class TabPreviewRenderer implements ImageRenderer {
 	private static final int W = 256, H = 144;
 	private static final String[] NAMES = {"Notch", "jeb_", "Alex", "Steve", "Dinnerbone", "Kai", "Noor", "Sunny"};
 	private static final int[] PINGS = {5, 5, 4, 5, 3, 5, 2, 4};
-	private static final ResourceLocation HOTBAR = ResourceLocation.withDefaultNamespace("hud/hotbar");
+	private static final ResourceLocation HOTBAR = new ResourceLocation("hud/hotbar");
 
 	private final TabAnimator animator;
 	private boolean open = true;
@@ -98,7 +98,7 @@ public class TabPreviewRenderer implements ImageRenderer {
 			drawText(g, font, Component.literal(NAMES[i]), left + 9, rowY);
 			RenderSystem.enableBlend();
 			g.setColor(1, 1, 1, animator.alpha());
-			g.blitSprite(ResourceLocation.withDefaultNamespace("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8);
+			g.blitSprite(new ResourceLocation("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8);
 			g.setColor(1, 1, 1, 1);
 		}
 		animator.endRow(g.pose());
