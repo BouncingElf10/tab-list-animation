@@ -91,7 +91,7 @@ public class TabPreviewRenderer implements ImageRenderer {
 			animator.beginRow(g.pose());
 			g.fill(left, rowY, left + rowWidth, rowY + 8, animator.tint(0x20FFFFFF));
 			UUID uuid = UUID.nameUUIDFromBytes(NAMES[i].getBytes(StandardCharsets.UTF_8));
-			PlayerFaceRenderer.draw(g, DefaultPlayerSkin.get(uuid).body().texturePath(), left, rowY, 8, true, NAMES[i].equals("Dinnerbone"), animator.tint(0xFFFFFFFF));
+			PlayerFaceRenderer.draw(g, DefaultPlayerSkin.get(uuid).texture(), left, rowY, 8, true, NAMES[i].equals("Dinnerbone"), animator.tint(0xFFFFFFFF));
 			g.drawString(font, Component.literal(NAMES[i]), left + 9, rowY, animator.tint(0xFFFFFFFF));
 			g.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.withDefaultNamespace("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8, animator.alpha());
 		}
