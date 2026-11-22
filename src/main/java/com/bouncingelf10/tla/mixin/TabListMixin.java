@@ -4,7 +4,6 @@ import com.bouncingelf10.tla.TabAnimator;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
@@ -15,21 +14,15 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(Gui.class)
 public class TabListMixin {
-	@WrapOperation(method = "renderTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z"))
+	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z"))
 	private boolean tla$keepOpen(KeyMapping key, Operation<Boolean> original) {
 		TabAnimator a = TabAnimator.HUD;
 		return a.update(a.resolveTarget(original.call(key)));
 	}
 
-	@WrapOperation(method = "renderTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerTabOverlay;render(Lnet/minecraft/client/gui/GuiGraphics;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V"))
+	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerTabOverlay;render(Lnet/minecraft/client/gui/GuiGraphics;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V"))
 	private void tla$animate(PlayerTabOverlay tabList, GuiGraphics graphics, int width, Scoreboard scoreboard, Objective objective, Operation<Void> original) {
 		TabAnimator a = TabAnimator.HUD;
-		Minecraft minecraft = Minecraft.getInstance();
-		if (a.prepareBlur(minecraft.screen != null)) {
-			graphics.flush();
-			minecraft.gameRenderer.processBlurEffect(minecraft.getFrameTime());
-			minecraft.getMainRenderTarget().bindWrite(false);
-		}
 		graphics.pose().pushPose();
 		a.applyListTransform(graphics.pose(), width);
 		TabAnimator.drawing = a;

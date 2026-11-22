@@ -17,7 +17,6 @@ A simple but customisable mod that gives the tab list a little more motion inste
 - Separate open and close animations, each with its own duration and easing
 - 31 easings to pick from, or a custom bezier curve
 - Scale, slide, fade and row cascade effects that can all be combined
-- Blur options while tab list is open
 - Toggle tab list option
 - 7 presets if you don't want to set everything up yourself
 - A config screen with a live preview of every option
@@ -59,7 +58,7 @@ If you just want something that looks nice, the **Presets** tab has a few ready 
 
 
 ## Requirements
-- Minecraft 1.20.5 to 1.20.6 with [Fabric](https://fabricmc.net/)
+- Minecraft 1.20.4 with [Fabric](https://fabricmc.net/)
 - [Fabric API](https://modrinth.com/mod/fabric-api)
 - [TimelessLib](https://modrinth.com/mod/timelesslib) 2.0.1 or newer
 - [YACL](https://modrinth.com/mod/yacl)

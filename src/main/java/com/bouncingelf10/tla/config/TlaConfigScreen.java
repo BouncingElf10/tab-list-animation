@@ -38,16 +38,13 @@ public final class TlaConfigScreen {
 		Option<Boolean> scale = bool("scaleEnabled");
 		Option<Boolean> slide = bool("slideEnabled");
 		Option<Boolean> rows = bool("rowsEnabled");
-		Option<Boolean> blur = opt("blurEnabled", TickBoxControllerBuilder::create, false);
 		List<Option<?>> scaleOpts = List.of(intOpt("scaleFrom", 0, 150, 5, "%d%%", true), enumOpt("scaleAxis", TlaConfig.ScaleAxis.class));
 		List<Option<?>> slideOpts = List.of(enumOpt("slideDirection", TlaConfig.Direction.class), intOpt("slideDistance", 0, 300, 5, "%dpx", true));
 		Option<Double> rowDelay = opt("rowDelay", o -> DoubleSliderControllerBuilder.create(o).range(0.0, 20.0).step(0.5).formatValue(v -> Component.literal("%.1f%%".formatted(v))));
 		List<Option<?>> rowOpts = List.of(rowDelay, enumOpt("rowDirection", TlaConfig.Direction.class), intOpt("rowDistance", 0, 100, 2, "%dpx", true), bool("rowFade"));
-		List<Option<?>> blurOpts = List.of(intOpt("blurStrength", 1, 10, 1, "%d", false));
 		when(scale, v -> v, scaleOpts);
 		when(slide, v -> v, slideOpts);
 		when(rows, v -> v, rowOpts);
-		when(blur, v -> v, blurOpts);
 
 		Option<Double> openDuration = opt("openDuration", this::seconds);
 		Option<Double> closeDuration = opt("closeDuration", this::seconds);
@@ -67,7 +64,6 @@ public final class TlaConfigScreen {
 						.group(group("slide", concat(slide, slideOpts)))
 						.group(group("fade", List.of(bool("fadeEnabled"))))
 						.group(group("rows", concat(rows, rowOpts)))
-						.group(group("blur", concat(blur, blurOpts)))
 						.build())
 				.category(presets())
 				.save(TlaConfig.HANDLER::save)

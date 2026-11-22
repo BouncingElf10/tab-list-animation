@@ -22,7 +22,6 @@ public final class TabAnimator {
 	private int row;
 	private boolean rowPushed;
 	private float rowAlpha = 1;
-	private int blurRadius = -1;
 
 	public TabAnimator(Supplier<TlaConfig> config) {
 		this.config = config;
@@ -122,7 +121,7 @@ public final class TabAnimator {
 		TlaConfig c = config.get();
 		float alpha = rowAlpha * (c.enabled && c.fadeEnabled ? (float) clamp01(value()) : 1);
 		if (alpha >= 1) return argb;
-		int out = FastColor.ARGB32.color((int) (FastColor.ARGB32.alpha(argb) * alpha), argb);
+		int out = (int) (FastColor.ARGB32.alpha(argb) * alpha) << 24 | argb & 0xFFFFFF;
 		return FastColor.ARGB32.alpha(out) < 4 ? out & 0xFFFFFF : out;
 	}
 
@@ -134,20 +133,6 @@ public final class TabAnimator {
 
 	public float alpha() {
 		return FastColor.ARGB32.alpha(tint(0xFFFFFFFF)) / 255f;
-	}
-
-	public boolean prepareBlur(boolean screenOpen) {
-		TlaConfig c = config.get();
-		double v = clamp01(value());
-		boolean blur = c.enabled && c.blurEnabled && v > 0 && !screenOpen;
-		blurRadius = blur ? (int) Math.round(c.blurStrength * v) : -1;
-		return blur;
-	}
-
-	public int consumeBlurRadius(int fallback) {
-		int r = blurRadius;
-		blurRadius = -1;
-		return r >= 0 ? r : fallback;
 	}
 
 	public static double value(Easing open, Easing close, boolean opening, double p) {
