@@ -3,7 +3,7 @@ package com.bouncingelf10.tla;
 import com.bouncingelf10.tla.config.TlaConfig;
 import dev.bouncingelf10.timelesslib.api.animation.Easing;
 import dev.bouncingelf10.timelesslib.api.clock.TimeSources;
-import net.minecraft.util.ARGB;
+import net.minecraft.util.FastColor;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import java.util.function.Supplier;
@@ -122,18 +122,18 @@ public final class TabAnimator {
 		TlaConfig c = config.get();
 		float alpha = rowAlpha * (c.enabled && c.fadeEnabled ? (float) clamp01(value()) : 1);
 		if (alpha >= 1) return argb;
-		int out = ARGB.color((int) (ARGB.alpha(argb) * alpha), argb);
-		return ARGB.alpha(out) < 4 ? out & 0xFFFFFF : out;
+		int out = FastColor.ARGB32.color((int) (FastColor.ARGB32.alpha(argb) * alpha), argb);
+		return FastColor.ARGB32.alpha(out) < 4 ? out & 0xFFFFFF : out;
 	}
 
 	// Font draws colours with alpha < 4 as opaque, so 0 means skip the draw.
 	public int tintText(int argb) {
 		int out = tint((argb & 0xFC000000) == 0 ? argb | 0xFF000000 : argb);
-		return ARGB.alpha(out) < 4 ? 0 : out;
+		return FastColor.ARGB32.alpha(out) < 4 ? 0 : out;
 	}
 
 	public float alpha() {
-		return ARGB.alpha(tint(0xFFFFFFFF)) / 255f;
+		return FastColor.ARGB32.alpha(tint(0xFFFFFFFF)) / 255f;
 	}
 
 	public boolean prepareBlur(boolean screenOpen) {

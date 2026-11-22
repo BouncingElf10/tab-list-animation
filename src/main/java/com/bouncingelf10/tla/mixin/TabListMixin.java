@@ -27,7 +27,7 @@ public class TabListMixin {
 		Minecraft minecraft = Minecraft.getInstance();
 		if (a.prepareBlur(minecraft.screen != null)) {
 			graphics.flush();
-			minecraft.gameRenderer.processBlurEffect();
+			minecraft.gameRenderer.processBlurEffect(minecraft.getTimer().getGameTimeDeltaPartialTick(false));
 			minecraft.getMainRenderTarget().bindWrite(false);
 		}
 		graphics.pose().pushPose();

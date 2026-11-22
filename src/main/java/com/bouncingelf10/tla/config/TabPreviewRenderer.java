@@ -1,17 +1,16 @@
 package com.bouncingelf10.tla.config;
 
 import com.bouncingelf10.tla.TabAnimator;
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ARGB;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -56,7 +55,7 @@ public class TabPreviewRenderer implements ImageRenderer {
 		graphics.pose().scale(scale, scale, 1);
 
 		graphics.fillGradient(0, 0, W, H, 0xFF78A7FF, 0xFFC3D9FF);
-		graphics.blitSprite(RenderType::guiTextured, HOTBAR, (W - 182) / 2, H - 23, 182, 22);
+		graphics.blitSprite(HOTBAR, (W - 182) / 2, H - 23, 182, 22);
 
 		if (animator.update(open)) {
 			graphics.pose().pushPose();
@@ -92,9 +91,15 @@ public class TabPreviewRenderer implements ImageRenderer {
 			animator.beginRow(g.pose());
 			g.fill(left, rowY, left + rowWidth, rowY + 8, animator.tint(0x20FFFFFF));
 			UUID uuid = UUID.nameUUIDFromBytes(NAMES[i].getBytes(StandardCharsets.UTF_8));
-			PlayerFaceRenderer.draw(g, DefaultPlayerSkin.get(uuid).texture(), left, rowY, 8, true, NAMES[i].equals("Dinnerbone"), animator.tint(0xFFFFFFFF));
+			RenderSystem.enableBlend();
+			g.setColor(1, 1, 1, animator.alpha());
+			PlayerFaceRenderer.draw(g, DefaultPlayerSkin.get(uuid).texture(), left, rowY, 8, true, NAMES[i].equals("Dinnerbone"));
+			g.setColor(1, 1, 1, 1);
 			drawText(g, font, Component.literal(NAMES[i]), left + 9, rowY);
-			g.blitSprite(RenderType::guiTextured, ResourceLocation.withDefaultNamespace("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8, ARGB.white(animator.alpha()));
+			RenderSystem.enableBlend();
+			g.setColor(1, 1, 1, animator.alpha());
+			g.blitSprite(ResourceLocation.withDefaultNamespace("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8);
+			g.setColor(1, 1, 1, 1);
 		}
 		animator.endRow(g.pose());
 

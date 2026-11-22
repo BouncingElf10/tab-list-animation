@@ -3,13 +3,12 @@ package com.bouncingelf10.tla.mixin;
 import com.bouncingelf10.tla.TabAnimator;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
@@ -20,8 +19,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.function.Function;
 
 @Mixin(PlayerTabOverlay.class)
 public class PlayerTabOverlayMixin {
@@ -88,18 +85,27 @@ public class PlayerTabOverlayMixin {
 		return tinted == 0 ? 0 : original.call(graphics, font, text, x, y, tinted);
 	}
 
-	@ModifyArg(method = RENDER, index = 7,
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerFaceRenderer;draw(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/ResourceLocation;IIIZZI)V"))
-	private int tla$fadeFace(int color) {
-		return tla$tint(color);
+	@WrapOperation(method = RENDER,
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerFaceRenderer;draw(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/ResourceLocation;IIIZZ)V"))
+	private void tla$fadeFace(GuiGraphics graphics, ResourceLocation skin, int x, int y, int size, boolean hat, boolean flip, Operation<Void> original) {
+		TabAnimator a = TabAnimator.drawing;
+		if (a != null) {
+			RenderSystem.enableBlend();
+			graphics.setColor(1, 1, 1, a.alpha());
+		}
+		original.call(graphics, skin, x, y, size, hat, flip);
+		graphics.setColor(1, 1, 1, 1);
 	}
 
 	@WrapOperation(method = {"renderPingIcon", "renderTablistHearts"}, require = 1,
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Ljava/util/function/Function;Lnet/minecraft/resources/ResourceLocation;IIII)V"))
-	private void tla$fadeSprites(GuiGraphics graphics, Function<ResourceLocation, RenderType> renderType, ResourceLocation sprite, int x, int y, int w, int h, Operation<Void> original) {
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V"))
+	private void tla$fadeSprites(GuiGraphics graphics, ResourceLocation sprite, int x, int y, int w, int h, Operation<Void> original) {
 		TabAnimator a = TabAnimator.drawing;
-		float alpha = a == null ? 1 : a.alpha();
-		if (alpha >= 1) original.call(graphics, renderType, sprite, x, y, w, h);
-		else graphics.blitSprite(renderType, sprite, x, y, w, h, ARGB.white(alpha));
+		if (a != null) {
+			RenderSystem.enableBlend();
+			graphics.setColor(1, 1, 1, a.alpha());
+		}
+		original.call(graphics, sprite, x, y, w, h);
+		graphics.setColor(1, 1, 1, 1);
 	}
 }
