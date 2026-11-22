@@ -3,7 +3,7 @@ package com.bouncingelf10.tla.mixin;
 import com.bouncingelf10.tla.TabAnimator;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
 import net.minecraft.resources.Identifier;
@@ -83,7 +83,7 @@ public class PlayerTabOverlayMixin {
 	}
 
 	@WrapOperation(method = {"extractPingIcon", "extractTablistHearts"}, require = 1,
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
 	private void tla$fadeSprites(GuiGraphicsExtractor graphics, RenderPipeline pipeline, Identifier sprite, int x, int y, int w, int h, Operation<Void> original) {
 		TabAnimator a = TabAnimator.drawing;
 		float alpha = a == null ? 1 : a.alpha();

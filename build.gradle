@@ -34,7 +34,7 @@ publishMods {
 	curseforge {
 		projectId = "1823452"
 		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-		minecraftVersions.add("26.3")
+		minecraftVersions.add("26.2")
 		client = true
 		server = false
 		requires("fabric-api", "timelesslib", "yacl")
@@ -43,7 +43,7 @@ publishMods {
 	modrinth {
 		projectId = "yDAMWuLf"
 		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-		minecraftVersions.add("26.3")
+		minecraftVersions.add("26.2")
 		requires("fabric-api", "timelesslib", "yacl")
 		optional("modmenu")
 	}
