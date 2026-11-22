@@ -59,7 +59,7 @@ If you just want something that looks nice, the **Presets** tab has a few ready 
 
 
 ## Requirements
-- Minecraft 1.21.11 with [Fabric](https://fabricmc.net/)
+- Minecraft 1.21.9 and 1.21.10 with [Fabric](https://fabricmc.net/)
 - [Fabric API](https://modrinth.com/mod/fabric-api)
 - [TimelessLib](https://modrinth.com/mod/timelesslib) 2.0.1 or newer
 - [YACL](https://modrinth.com/mod/yacl)

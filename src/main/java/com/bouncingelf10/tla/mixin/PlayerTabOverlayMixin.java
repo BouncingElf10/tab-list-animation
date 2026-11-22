@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
 import org.spongepowered.asm.mixin.Mixin;
@@ -77,14 +77,14 @@ public class PlayerTabOverlayMixin {
 	}
 
 	@ModifyArg(method = RENDER, index = 7,
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerFaceRenderer;draw(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/Identifier;IIIZZI)V"))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerFaceRenderer;draw(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/ResourceLocation;IIIZZI)V"))
 	private int tla$fadeFace(int color) {
 		return tla$tint(color);
 	}
 
 	@WrapOperation(method = {"renderPingIcon", "renderTablistHearts"}, require = 1,
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
-	private void tla$fadeSprites(GuiGraphics graphics, RenderPipeline pipeline, Identifier sprite, int x, int y, int w, int h, Operation<Void> original) {
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V"))
+	private void tla$fadeSprites(GuiGraphics graphics, RenderPipeline pipeline, ResourceLocation sprite, int x, int y, int w, int h, Operation<Void> original) {
 		TabAnimator a = TabAnimator.drawing;
 		float alpha = a == null ? 1 : a.alpha();
 		if (alpha >= 1) original.call(graphics, pipeline, sprite, x, y, w, h);

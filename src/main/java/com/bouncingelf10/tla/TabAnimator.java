@@ -122,7 +122,7 @@ public final class TabAnimator {
 		TlaConfig c = config.get();
 		float alpha = rowAlpha * (c.enabled && c.fadeEnabled ? (float) clamp01(value()) : 1);
 		if (alpha >= 1) return argb;
-		int out = ARGB.multiplyAlpha(argb, alpha);
+		int out = ARGB.color(ARGB.alphaFloat(argb) * alpha, argb);
 		return ARGB.alpha(out) < 4 ? out & 0xFFFFFF : out;
 	}
 

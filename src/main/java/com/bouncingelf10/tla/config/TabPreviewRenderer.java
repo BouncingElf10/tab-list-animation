@@ -10,7 +10,7 @@ import net.minecraft.client.gui.components.PlayerFaceRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -19,7 +19,7 @@ public class TabPreviewRenderer implements ImageRenderer {
 	private static final int W = 256, H = 144;
 	private static final String[] NAMES = {"Notch", "jeb_", "Alex", "Steve", "Dinnerbone", "Kai", "Noor", "Sunny"};
 	private static final int[] PINGS = {5, 5, 4, 5, 3, 5, 2, 4};
-	private static final Identifier HOTBAR = Identifier.withDefaultNamespace("hud/hotbar");
+	private static final ResourceLocation HOTBAR = ResourceLocation.withDefaultNamespace("hud/hotbar");
 
 	private final TabAnimator animator;
 	private boolean open = true;
@@ -93,7 +93,7 @@ public class TabPreviewRenderer implements ImageRenderer {
 			UUID uuid = UUID.nameUUIDFromBytes(NAMES[i].getBytes(StandardCharsets.UTF_8));
 			PlayerFaceRenderer.draw(g, DefaultPlayerSkin.get(uuid).body().texturePath(), left, rowY, 8, true, NAMES[i].equals("Dinnerbone"), animator.tint(0xFFFFFFFF));
 			g.drawString(font, Component.literal(NAMES[i]), left + 9, rowY, animator.tint(0xFFFFFFFF));
-			g.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8, animator.alpha());
+			g.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.withDefaultNamespace("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8, animator.alpha());
 		}
 		animator.endRow(g.pose());
 
