@@ -67,9 +67,18 @@ public class PlayerTabOverlayMixin {
 		return tla$tint(color);
 	}
 
-	@WrapOperation(method = {RENDER, "renderTablistScore", "renderTablistHearts"}, require = 1,
+	@WrapOperation(method = RENDER,
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)I"))
 	private int tla$fadeText(GuiGraphics graphics, Font font, Component text, int x, int y, int color, Operation<Integer> original) {
+		TabAnimator a = TabAnimator.drawing;
+		if (a == null) return original.call(graphics, font, text, x, y, color);
+		int tinted = a.tintText(color);
+		return tinted == 0 ? 0 : original.call(graphics, font, text, x, y, tinted);
+	}
+
+	@WrapOperation(method = {"renderTablistScore", "renderTablistHearts"}, require = 1,
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Ljava/lang/String;III)I"))
+	private int tla$fadeScores(GuiGraphics graphics, Font font, String text, int x, int y, int color, Operation<Integer> original) {
 		TabAnimator a = TabAnimator.drawing;
 		if (a == null) return original.call(graphics, font, text, x, y, color);
 		int tinted = a.tintText(color);
@@ -98,14 +107,14 @@ public class PlayerTabOverlayMixin {
 	}
 
 	@WrapOperation(method = {"renderPingIcon", "renderTablistHearts"}, require = 1,
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V"))
-	private void tla$fadeSprites(GuiGraphics graphics, ResourceLocation sprite, int x, int y, int w, int h, Operation<Void> original) {
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"))
+	private void tla$fadeIcons(GuiGraphics graphics, ResourceLocation texture, int x, int y, int u, int v, int w, int h, Operation<Void> original) {
 		TabAnimator a = TabAnimator.drawing;
 		if (a != null) {
 			RenderSystem.enableBlend();
 			graphics.setColor(1, 1, 1, a.alpha());
 		}
-		original.call(graphics, sprite, x, y, w, h);
+		original.call(graphics, texture, x, y, u, v, w, h);
 		graphics.setColor(1, 1, 1, 1);
 	}
 }

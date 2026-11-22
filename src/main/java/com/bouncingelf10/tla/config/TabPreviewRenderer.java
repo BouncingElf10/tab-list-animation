@@ -19,7 +19,8 @@ public class TabPreviewRenderer implements ImageRenderer {
 	private static final int W = 256, H = 144;
 	private static final String[] NAMES = {"Notch", "jeb_", "Alex", "Steve", "Dinnerbone", "Kai", "Noor", "Sunny"};
 	private static final int[] PINGS = {5, 5, 4, 5, 3, 5, 2, 4};
-	private static final ResourceLocation HOTBAR = new ResourceLocation("hud/hotbar");
+	private static final ResourceLocation WIDGETS = new ResourceLocation("textures/gui/widgets.png");
+	private static final ResourceLocation ICONS = new ResourceLocation("textures/gui/icons.png");
 
 	private final TabAnimator animator;
 	private boolean open = true;
@@ -55,7 +56,7 @@ public class TabPreviewRenderer implements ImageRenderer {
 		graphics.pose().scale(scale, scale, 1);
 
 		graphics.fillGradient(0, 0, W, H, 0xFF78A7FF, 0xFFC3D9FF);
-		graphics.blitSprite(HOTBAR, (W - 182) / 2, H - 23, 182, 22);
+		graphics.blit(WIDGETS, (W - 182) / 2, H - 23, 0, 0, 182, 22);
 
 		if (animator.update(open)) {
 			graphics.pose().pushPose();
@@ -93,12 +94,12 @@ public class TabPreviewRenderer implements ImageRenderer {
 			UUID uuid = UUID.nameUUIDFromBytes(NAMES[i].getBytes(StandardCharsets.UTF_8));
 			RenderSystem.enableBlend();
 			g.setColor(1, 1, 1, animator.alpha());
-			PlayerFaceRenderer.draw(g, DefaultPlayerSkin.get(uuid).texture(), left, rowY, 8, true, NAMES[i].equals("Dinnerbone"));
+			PlayerFaceRenderer.draw(g, DefaultPlayerSkin.getDefaultSkin(uuid), left, rowY, 8, true, NAMES[i].equals("Dinnerbone"));
 			g.setColor(1, 1, 1, 1);
 			drawText(g, font, Component.literal(NAMES[i]), left + 9, rowY);
 			RenderSystem.enableBlend();
 			g.setColor(1, 1, 1, animator.alpha());
-			g.blitSprite(new ResourceLocation("icon/ping_" + PINGS[i]), left + rowWidth - 11, rowY, 10, 8);
+			g.blit(ICONS, left + rowWidth - 11, rowY, 0, 176 + (5 - PINGS[i]) * 8, 10, 8);
 			g.setColor(1, 1, 1, 1);
 		}
 		animator.endRow(g.pose());
