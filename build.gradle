@@ -1,6 +1,7 @@
 plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
+	id "me.modmuss50.mod-publish-plugin" version "2.0.0"
 }
 
 repositories {
@@ -22,6 +23,30 @@ dependencies {
 	implementation "maven.modrinth:yacl:${project.yacl_version}"
 	compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
 	localRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
+}
+
+publishMods {
+	file = jar.archiveFile
+	changelog = "Initial release"
+	type = STABLE
+	modLoaders.add("fabric")
+
+	curseforge {
+		projectId = "1823452"
+		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+		minecraftVersions.add("26.3")
+		client = true
+		server = false
+		requires("fabric-api", "timelesslib", "yacl")
+		optional("modmenu")
+	}
+	modrinth {
+		projectId = "yDAMWuLf"
+		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+		minecraftVersions.add("26.3")
+		requires("fabric-api", "timelesslib", "yacl")
+		optional("modmenu")
+	}
 }
 
 processResources {

@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public final class TlaConfigScreen {
 	private static final String KEY = TabListAnimationClient.MOD_ID + ".";
@@ -139,7 +140,7 @@ public final class TlaConfigScreen {
 	}
 
 	private static List<Option<?>> concat(Option<?> head, List<Option<?>> tail) {
-		return java.util.stream.Stream.concat(java.util.stream.Stream.of(head), tail.stream()).toList();
+		return Stream.concat(Stream.of(head), tail.stream()).toList();
 	}
 
 	private Option<Boolean> bool(String field) {

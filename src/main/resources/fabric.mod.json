@@ -3,14 +3,14 @@
 	"id": "tab-list-animation",
 	"version": "${version}",
 	"name": "Tab List Animation",
-	"description": "Smooth, configurable open/close animations for the player tab list: easings, scale, slide, fade, row cascade and blur.",
+	"description": "Fancy open/close animations for the player tab list.",
 	"authors": [
 		"BouncingElf10"
 	],
 	"contact": {
 		"sources": "https://github.com/BouncingElf10/tab-list-animation"
 	},
-	"license": "CC0-1.0",
+	"license": "GPL-3.0-or-later",
 	"icon": "assets/tab-list-animation/icon.png",
 	"environment": "client",
 	"entrypoints": {

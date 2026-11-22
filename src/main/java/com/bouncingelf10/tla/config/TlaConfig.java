@@ -9,6 +9,7 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
 
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -151,7 +152,7 @@ public class TlaConfig {
 			TlaConfig fresh = new TlaConfig();
 			changes.accept(fresh);
 			for (var f : TlaConfig.class.getFields()) {
-				if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) continue;
+				if (Modifier.isStatic(f.getModifiers())) continue;
 				try {
 					f.set(target, f.get(fresh));
 				} catch (IllegalAccessException e) {

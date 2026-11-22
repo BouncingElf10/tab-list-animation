@@ -23,7 +23,7 @@ public class PlayerTabOverlayMixin {
 	@Unique private static final String RENDER = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V";
 
 	@Unique
-    private static int tla$tint(int color) {
+	private static int tla$tint(int color) {
 		TabAnimator a = TabAnimator.drawing;
 		return a == null ? color : a.tint(color);
 	}
