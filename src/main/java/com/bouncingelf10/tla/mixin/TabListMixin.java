@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
@@ -15,14 +15,14 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(Gui.class)
 public class TabListMixin {
-	@WrapOperation(method = "extractTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z"))
+	@WrapOperation(method = "renderTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z"))
 	private boolean tla$keepOpen(KeyMapping key, Operation<Boolean> original) {
 		TabAnimator a = TabAnimator.HUD;
 		return a.update(a.resolveTarget(original.call(key)));
 	}
 
-	@WrapOperation(method = "extractTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerTabOverlay;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V"))
-	private void tla$animate(PlayerTabOverlay tabList, GuiGraphicsExtractor graphics, int width, Scoreboard scoreboard, Objective objective, Operation<Void> original) {
+	@WrapOperation(method = "renderTabList", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/PlayerTabOverlay;render(Lnet/minecraft/client/gui/GuiGraphics;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V"))
+	private void tla$animate(PlayerTabOverlay tabList, GuiGraphics graphics, int width, Scoreboard scoreboard, Objective objective, Operation<Void> original) {
 		TabAnimator a = TabAnimator.HUD;
 		if (a.prepareBlur(Minecraft.getInstance().screen != null)) graphics.blurBeforeThisStratum();
 		graphics.pose().pushMatrix();
